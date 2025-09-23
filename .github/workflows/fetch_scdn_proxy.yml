@@ -27,7 +27,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No proxy update"
           else
-            git commit -m "fetch proxy: $(date +'%Y-%m-%d %H:%M:%S')"
+            git commit -m "fetch proxy: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
             git push
           fi
         env:
