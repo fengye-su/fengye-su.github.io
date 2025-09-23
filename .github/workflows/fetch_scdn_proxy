@@ -1,0 +1,34 @@
+name: fetch_scdn_proxy
+
+on:
+  schedule:
+    - cron: '0 1,7,13,19 * * *'  
+  workflow_dispatch: 
+
+jobs:
+  crawl-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: fetch proxy
+        run: |
+          curl -s "https://proxy.scdn.io/text.php" -o files/proxy.txt
+
+      - name: configure Git
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+
+      - name: push
+        run: |
+          git add files/proxy.txt
+          if git diff --staged --quiet; then
+            echo "No proxy update"
+          else
+            git commit -m "fetch proxy: $(date +'%Y-%m-%d %H:%M:%S')"
+            git push
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
